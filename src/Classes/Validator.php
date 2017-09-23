@@ -1,0 +1,166 @@
+<?php
+namespace Student\Classes;
+
+class Validator
+	{
+		
+		private	$name_pattern = "/^[А-ЯЁ]([а-яё]*)([ '-][А-ЯЁ]([а-яё]*))?/u";
+		private	$surname_pattern = "/^[А-ЯЁ]([а-яё]*)([ '-][А-ЯЁ]([а-яё]*))?/u";
+		private	$gender_pattern = "/male|female/";
+		private	$groupNumber_pattern = "/([-а-яёА-ЯЁ0-9]+)/";
+		private	$e_mail_pattern = "/\@/u";
+		private	$score_pattern = "/([0-9])+/";
+		private	$dob_pattern = "/^[1-2][90][78910][0-9][-][01][0-9][-][0-3][0-9]$/";
+		private	$locality_pattern = "/resident|nonresident/";
+		private	$digits_pattern = "/[0-9]+/";
+		private $tag_pattern = "/[<>]+/";
+		public $message = [];
+		public function validate($form,$dataGateway)
+		{
+			$this->message=[];
+			$tag_pattern = $this->tag_pattern;
+			$digits_pattern = $this->digits_pattern;
+			$name_pattern = $this->name_pattern;
+			$surname_pattern = $this->surname_pattern;
+			$gender_pattern = $this->gender_pattern;
+			$groupNumber_pattern = $this->groupNumber_pattern;
+			$e_mail_pattern = $this->e_mail_pattern;
+			$score_pattern = $this->score_pattern;
+			$dob_pattern = $this->dob_pattern;
+			$locality_pattern = $this->locality_pattern;
+
+			//name validate	
+			if ((mb_strlen($form['name'])==0)  OR ($form['name']=='Имя'))
+			{
+				$this->message['name'] = "Заполните строку имя";
+			}
+			elseif (preg_match($digits_pattern, $form['name'])==1) {
+				$this->message['name'] = "Вы ввели цифры в поле имя, можно только буквы пробел и апостроф!";
+			}
+			elseif (preg_match($tag_pattern, $form['name'])==1) {
+				$this->message['name'] = "Вы ввели недопустимые символы < или >, можно только буквы пробел и апостроф";
+			}
+			elseif (preg_match($name_pattern, $form['name'])==0) 
+			{
+				$this->message['name'] = "Имя должно быть не длиннее 40 символов и может содержать пробел, дефис и апостроф!";
+			}
+			elseif ((preg_match($name_pattern, $form['name'])==1)&(mb_strlen($form['name'])>40)) {
+				$this->message['name'] = "Имя должно быть не длиннее 40-ка символов!";
+			}
+			elseif ((preg_match($name_pattern, $form['name'])==1)&(mb_strlen($form['name'])>40)) {
+				$this->message['name'] = "Имя должно быть не длиннее 40-ка символов!";
+			}
+			elseif ((preg_match($name_pattern, $form['name'])==1) &(preg_match($tag_pattern, $form['name'])==0) &(preg_match($digits_pattern,$form['name'])==0) &(40>mb_strlen($form['name'])) & (mb_strlen($form['name'])>0)){
+				$this->message['name'] = '';
+			}
+			//surname validate	
+			if ((mb_strlen($form['surname'])==0) OR ($form['surname']=='Фамилия')){
+				$this->message['surname'] = "Заполните строку фамилия";
+			}
+			elseif (preg_match($digits_pattern, $form['surname'])==1) {
+				$this->message['surname'] = "Вы ввели цифры в поле фамилия, можно только буквы пробел и апостроф!";
+			}
+			elseif (preg_match($tag_pattern, $form['surname'])==1) {
+				$this->message['surname'] = "Вы ввели недопустимые символы < или >, можно только буквы пробел и апостроф";
+			}
+			elseif (preg_match($name_pattern, $form['surname'])==0) {
+				$this->message['surname'] = "Фамилия должна быть не длиннее 40 символов и может содержать пробел, дефис и апостроф!";
+			}
+			elseif ((preg_match($name_pattern, $form['surname'])==1)&(mb_strlen($form['surname'])>40)) {
+				$this->message['surname'] = "Фамилия  должно быть не длиннее 40-ка символов!";
+			}
+			elseif ((preg_match($name_pattern, $form['surname'])==1)&(mb_strlen($form['surname'])>40)) {
+				$this->message['surname'] = "Фамилия должно быть не длиннее 40-ка символов!";
+			}
+			elseif ((preg_match($name_pattern, $form['surname'])==1) & (40>mb_strlen($form['surname'])) & (mb_strlen($form['surname'])>0) &(preg_match($digits_pattern, $form['surname'])==0) & (preg_match($tag_pattern, $form['surname'])==0)) {
+				$this->message['surname'] = '';
+			}
+			//validate gender
+			if (preg_match($gender_pattern, $form['gender'])==0){
+				$this->message['gender'] = "Укажите пол!";
+			}	
+			elseif (preg_match($gender_pattern, $form['gender'])==1){
+				$this->message['gender'] = '';
+			}
+			//validate groupnumber
+			if ((mb_strlen($form['groupnumber'])==0) OR ($form['groupnumber']=='Номер группы')){
+				$this->message['groupnumber'] = "Введите Номер группы!";
+			}
+			elseif (mb_strlen($form['groupnumber'])<2){
+				$this->message['groupnumber'] = "Номер группы должен быь длиннее двух символов!";
+			}
+			elseif (mb_strlen($form['groupnumber'])>5) {
+				$this->message['groupnumber'] = "Номер группы должен быь короче пяти символов!";
+			}
+			elseif (preg_match($groupNumber_pattern, $form['groupnumber'])==0){
+				$this->message['groupnumber'] = "Номер группы должен состоять из букв и цифр и может содержать дефис!";
+			}
+			elseif (preg_match($groupNumber_pattern, $form['groupnumber'])==1) {
+				$this->message['groupnumber'] = '';
+			}
+			//validate e_mail
+			if ((mb_strlen($form['e_mail'])==0) OR ($form['e_mail']=='user@host.ru')){
+				$this->message['e_mail'] = "Введите адресс электронной почты!";
+			}
+			elseif (mb_strlen($form['e_mail'])>40){
+				$this->message['e_mail'] = "Адресс электронной почты ограничен 40 символами!";
+			}
+			elseif (preg_match($e_mail_pattern, $form['e_mail'])==0){
+				$this->message['e_mail'] = "Адресс электронной почты должен содержать символ @!";
+			}
+			elseif (!$dataGateway->checkEmailUnique($form['e_mail'])){
+				$this->message['e_mail'] = "Данный емейл уже зарегистрирован!";
+			}
+			elseif ((40>mb_strlen($form['e_mail'])) & (mb_strlen($form['e_mail'])>3)& (preg_match($e_mail_pattern, $form['e_mail'])==1)){
+				$this->message['e_mail'] = '';
+			}
+			//score validate
+			
+			if ($form['score']=='') {
+				$this->message['score'] = "Введите количество баллов!";
+			}
+			elseif ($form['score']<30){
+				$this->message['score'] = "Вы ввели слишком маленькое значение баллов за ЕГЭ!";
+			}	
+			elseif ($form['score']==30) {
+				$this->message['score'] = "Введите количество баллов!";
+			}
+			elseif ($form['score']>300){
+				$this->message['score'] = "Вы ввели слишком большое значение баллов за ЕГЭ!";
+			}
+			elseif (preg_match($score_pattern, $form['score'])==0){
+				$this->message['score'] = "Вы ввели не число!";
+			}
+			elseif ((preg_match($score_pattern, $form['score'])==1) & (300>$form['score']) & ($form['score']>30)){
+				$this->message['score'] = '';
+			}
+			//validate dob
+			if ($form['dob']==""){
+				$this->message['dob'] = "Введите дату рождения!";
+			}
+			elseif (preg_match($dob_pattern, $form['dob'])==1){
+				$this->message['dob'] = '';
+			}
+			//validate locality
+			if (preg_match($locality_pattern, $form['locality'])==0){
+				$this->message['locality'] = "Выберите прописку!";
+			}
+			elseif (preg_match($locality_pattern, $form['locality'])==1){
+				$this->message['locality'] = '';
+			}
+				return $this;
+		}
+		public function checkArr($message)
+		{
+			foreach ($message as $key => $value) {
+				if ($value<>''){
+					return false;
+				}
+			}
+			return true;
+
+		}	
+	}
+/**
+* 
+*/

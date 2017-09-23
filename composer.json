@@ -1,0 +1,12 @@
+{
+    "name": "radiodog/student",
+    "description": "StudentDB",
+   
+
+
+    "autoload": {
+        "psr-4": {
+            "Student\\": "src/"
+        }
+    }
+}
